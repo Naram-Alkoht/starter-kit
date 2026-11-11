@@ -1,8 +1,9 @@
 /.phpunit.cache
 /node_modules
-/public/build
 /public/fonts-manifest.dev.json
+/public/fonts/filament
 /public/hot
+/public/js/filament
 /public/storage
 /storage/*.key
 /storage/pail
@@ -38,3 +39,13 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Project exclude paths
+/storage/app/*
+# storage/app/public keeps its own .gitignore, so files the client provides (e.g. a logo) can be committed.
+!/storage/app/public/
+/storage/rector-cache/
+/storage/media-library/
+/tmp/
+
+/public/css/filament

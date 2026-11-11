@@ -1,30 +1,38 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/blank-livewire-starter-kit",
+    "name": "naram/starter-kit",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
-    "keywords": [
-        "laravel",
-        "framework"
-    ],
+    "description": "Naram's Laravel starter kit: Livewire, Filament, Pest, Rector, Larastan.",
+    "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "filament/filament": "^5.11",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "livewire/blaze": "^1.0",
-        "livewire/livewire": "^4.1"
+        "livewire/livewire": "^4.1",
+        "nunomaduro/essentials": "^1.2",
+        "spatie/laravel-medialibrary": "^11.23",
+        "spatie/laravel-one-time-passwords": "^1.1",
+        "ysfkaya/filament-phone-input": "^4.2"
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.7",
         "fakerphp/faker": "^1.24",
+        "fruitcake/laravel-debugbar": "^4.4",
         "larastan/larastan": "^3.9",
+        "laravel/boost": "^2.2",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
-        "laravel/pint": "^1.27",
+        "laravel/pint": "^1.27,!=1.32.2",
         "laravel/sail": "^1.53",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9.3",
-        "phpunit/phpunit": "^12.5.23"
+        "pestphp/pest": "^5.3",
+        "pestphp/pest-plugin-browser": "^5.2",
+        "pestphp/pest-plugin-laravel": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.1"
     },
     "autoload": {
         "psr-4": {
@@ -44,35 +52,40 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
-            "npm install",
-            "npm run build"
+            "bun install",
+            "bun run build"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
         ],
         "lint": [
-            "pint --parallel"
+            "rector",
+            "pint --parallel",
+            "bun run lint"
         ],
-        "lint:check": [
-            "pint --parallel --test"
+        "test:lint": [
+            "pint --parallel --test",
+            "rector --dry-run",
+            "bun run test:lint"
         ],
+        "test:type-coverage": "pest --type-coverage --min=100",
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
             "@test"
         ],
-        "types:check": [
-            "phpstan analyse"
-        ],
+        "test:unit": "powershell -Command \"$env:XDEBUG_MODE='coverage'; pest --parallel --coverage --min=90.0\"",
+        "test:types": "phpstan",
         "test": [
-            "@php artisan config:clear --ansi",
-            "@lint:check",
-            "@types:check",
-            "@php artisan test"
+            "@test:type-coverage",
+            "@test:unit",
+            "@test:lint",
+            "@test:types"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
